@@ -3,10 +3,12 @@ import Navbar from "../components/Navbar";
 import { Link, useNavigate } from "react-router-dom";
 import axios from 'axios'
 import { Card } from "flowbite-react";
+import Category from "../components/Categories";
 
 const HomePage = () => {
   const navigate = useNavigate();
   const [products, setproducts] = useState([]);
+  const [search, setsearch] = useState('');
 
   // useEffect(() => {
   //   if (!localStorage.getItem("token")) {
@@ -34,13 +36,29 @@ const HomePage = () => {
   //   settemp_pdt(products);
   // }, [products]);
 
+  const handleSearch = (value) => {
+    console.log(value);
+    setsearch(value);
+  }
+
+  const handleClick = () => {
+     console.log('products', products);
+     let filteredProducts = products.filter((item)=> {
+      if (item.name.toLowerCase().includes(search.toLowerCase()) || item.price.toLowerCase().includes(search.toLowerCase()) || item.description.toLowerCase().includes(search.toLowerCase()) || item.category.toLowerCase().includes(search.toLowerCase())) {
+        return item;
+      }
+     })
+     setproducts(filteredProducts);
+  }
+
   return (
     <>
-      <Navbar />
-      <div className='mt-[5rem]'>
+      <Navbar search={search} handleSearch={handleSearch} handleClick = {handleClick}/>
+      <Category/>
+      <div className='mt-[8rem]'>
         {localStorage.getItem("token") &&
         <button className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-          <Link to="/sell">Create product</Link>
+          <Link to="/sell">Add product</Link>
         </button>}
 
 
@@ -61,7 +79,7 @@ const HomePage = () => {
         <div className="flex justify-center flex-wrap gap-2">
         {products && products.length > 0 && products.map((item, index) => {
             {return (
-              <div className=" bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+              <div key={item._id} className=" bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
                 <a href="#">
                   <img width="350px" height="200px"
                     className="p-8 rounded-t-lg"

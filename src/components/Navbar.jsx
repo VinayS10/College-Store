@@ -1,7 +1,7 @@
 import React from 'react'
 import {Link, useNavigate} from 'react-router-dom'
 
-const Navbar = () => {
+const Navbar = (props) => {
     const navigate = useNavigate();
     const handleLogout = () => {
         localStorage.removeItem('token');
@@ -49,14 +49,15 @@ const Navbar = () => {
                             </button>
                         </span>
                         <input
-                            
                             type="search"
+                            value={props && props.search}
+                            onChange={(e) => props.handleSearch && props.handleSearch(e.target.value)}
                             name="search"
                             placeholder="Search..."
                             className="py-2 pl-10 pr-4 border border-gray-300 rounded-md focus:outline-none focus:border-gray-500"
                         />
                         <button
-                            
+                            onClick={() => props.handleClick && props.handleClick()}
                             type="button" className=" h-[42px] text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Search
 
                         </button>
