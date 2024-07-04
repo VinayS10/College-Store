@@ -2,7 +2,26 @@ import express from "express";
 const app = express()
 import bodyParser from "body-parser";
 import cors from 'cors';
+import path from 'path';
 import jwt from 'jsonwebtoken';
+import multer from 'multer';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads')
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+        cb(null, file.fieldname + '-' + uniqueSuffix)
+    }
+})
+const upload = multer({ storage: storage })
+app.use('/uploads', express.static(path.join(__dirname,'uploads')));
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -13,6 +32,7 @@ mongoose.connect('mongodb://localhost:27017/Shop');
 
 
 const Users = mongoose.model('Users', {username: String, password: String}); 
+const saleProducts= mongoose.model('saleProducts',{name: String, category: String, price: String, description: String, image: String });
 
 app.get('/', (req, res) => {
     res.send('Hello, world  !')
@@ -56,6 +76,33 @@ app.post('/login', (req, res) => {
     })
     .catch(() => {
         res.send({message: 'server error'});
+    })
+})
+
+app.post('/sell', upload.single('image'), (req, res) => {
+    console.log(req.body);
+    console.log(req.file);
+    const name = req.body.name;
+    const category = req.body.category;
+    const price = req.body.price;
+    const description=req.body.description;
+    const image = req.file.path;
+    const spdt= new saleProducts({name:name,category:category,price:price,description:description,image:image});
+    spdt.save().then(() => {
+        res.send({ message: 'saved successfully' })
+
+    }).catch(() => {
+        res.send({ message: 'server error' });
+    })
+})
+
+app.get('/get-product',(req,res)=>{
+    saleProducts.find().then((result)=>{
+        console.log(result,'user data');
+        res.send({products:result})
+    }).catch((err)=>{
+        console.log(err);
+        res.send({message:'server error'})
     })
 })
 

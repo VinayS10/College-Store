@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
-import {Link} from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
 import axios from 'axios'
 
 const Signup = () => {
-
+    const navigate = useNavigate()
     const [username, setusername] = useState()
     const [password, setpassword] = useState()
     
@@ -18,6 +18,7 @@ const Signup = () => {
             if(res.data.message) {
                 alert(res.data.message);
             }
+            navigate('/login')
         }) 
         .catch((err) => {
             console.log(err);
@@ -72,15 +73,6 @@ const Signup = () => {
                         SignUp
                     </button>
                    
-                </div>
-                <div className='flex item-center gap-6 justify-center sm:p-5'>
-                    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                        Already have account
-                    </label>
-                     <div className="text-black ">
-                        <Link to='/login'>Login</Link>
-                     </div>
-                     
                 </div>
 
             </div>

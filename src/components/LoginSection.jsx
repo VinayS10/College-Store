@@ -75,16 +75,6 @@ const LoginSection = () => {
                     </button>
                    
                 </div>
-                <div className='flex item-center gap-6 justify-center sm:p-5'>
-                    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                        Don't have account
-                    </label>
-                     <div className="text-black ">
-                        <Link to='/signup'>SignUp</Link>
-                     </div>
-                     
-                </div>
-
             </div>
         </div>
   )
