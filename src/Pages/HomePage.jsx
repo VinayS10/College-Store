@@ -3,12 +3,14 @@ import Navbar from "../components/Navbar";
 import { Link, useNavigate } from "react-router-dom";
 import axios from 'axios'
 import { Card } from "flowbite-react";
-import Category from "../components/Categories";
+import Category from "../components/Category";
 
 const HomePage = () => {
   const navigate = useNavigate();
   const [products, setproducts] = useState([]);
+  const [catproducts, setcatproducts] = useState([]);
   const [search, setsearch] = useState('');
+  const [catfiter, setcatfiter] = useState('');
 
   // useEffect(() => {
   //   if (!localStorage.getItem("token")) {
@@ -22,6 +24,7 @@ const HomePage = () => {
       console.log(result);
       if (result.data.products) {
         setproducts(result.data.products)
+        setcatproducts(result.data.products)
       }
     }).catch((err) => {
       console.log(err);
@@ -29,11 +32,8 @@ const HomePage = () => {
     })
   }, [])
 
-  // const [temp_pdt, settemp_pdt] = useState([]);
-
   // useEffect(() => {
-  //   console.log('useEffect');
-  //   settemp_pdt(products);
+  //   setcatproducts(products);
   // }, [products]);
 
   const handleSearch = (value) => {
@@ -48,36 +48,34 @@ const HomePage = () => {
         return item;
       }
      })
-     setproducts(filteredProducts);
+     setcatproducts(filteredProducts);
+  }
+
+  const handleCategory = (value) => {
+    let filteredProducts = products.filter((item)=> {
+      if(value == 'All') {
+        return item;
+      }
+      else if (item.category.toLowerCase() === (value.toLowerCase())) {
+        console.log(item.name);
+        return item;
+      }
+     })
+     setcatproducts(filteredProducts);
   }
 
   return (
     <>
       <Navbar search={search} handleSearch={handleSearch} handleClick = {handleClick}/>
-      <Category/>
+      <Category handleCategory={handleCategory}/>
       <div className='mt-[8rem]'>
         {localStorage.getItem("token") &&
         <button className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
           <Link to="/sell">Add product</Link>
         </button>}
 
-
-        {/* <div className="d-flex justify-content-center flex-wrap">
-          {products && products.length>0 &&
-            products.map((item, index) => {
-            return(
-              <div className="card m-3">
-                <img width="300px" hight="200px" src={'http://localhost:3000/:'+item.image}/>
-                <p className="pl-2">{item.name} | {item.category}</p>
-                <h3 className="pl-2 text-danger">{item.price}</h3>
-                <p className= 'pl-2 text-success'>{item.description}</p>
-              </div>
-            )
-          })}
-        </div> */}
-
         <div className="flex justify-center flex-wrap gap-2">
-        {products && products.length > 0 && products.map((item, index) => {
+        {catproducts && catproducts.length > 0 && catproducts.map((item, index) => {
             {return (
               <div key={item._id} className=" bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
                 <a href="#">
