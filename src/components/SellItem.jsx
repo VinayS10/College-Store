@@ -10,7 +10,8 @@ const SellItem = () => {
   const [category, setcategory] = useState("");
   const [price, setprice] = useState("");
   const [description, setdescription] = useState("");
-  const [image, setimage] = useState("");
+  const [image1, setimage1] = useState("");
+  const [image2, setimage2] = useState("");
 
   const handleApi = () => {
     console.log("clicked");
@@ -20,7 +21,9 @@ const SellItem = () => {
     formdata.append("category", category);
     formdata.append("price", price);
     formdata.append("description", description);
-    formdata.append("image", image);
+    formdata.append("image1", image1);
+    formdata.append("image2", image2);
+    formdata.append("userId",localStorage.getItem("userId"));
 
     const url = "http://localhost:3000/sell";
 
@@ -73,7 +76,7 @@ const SellItem = () => {
           <div>
             <div className="grid gap-4 mb-4 sm:grid-cols-2">
               <div>
-                <div className="mb-9 ">
+                <div className="mb-2 ">
                   <label
                     htmlFor="name"
                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -93,7 +96,7 @@ const SellItem = () => {
                     required=""
                   />
                 </div>
-                <div className="mb-9 ">
+                <div className="mb-2 ">
                   <label
                     htmlFor="category"
                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -117,7 +120,7 @@ const SellItem = () => {
                     <option value="Others">Others</option>
                   </select>
                 </div>
-                <div className="mb-5 ">
+                <div className="mb-2 ">
                   <label
                     htmlFor="price"
                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -140,6 +143,25 @@ const SellItem = () => {
               </div>
 
               <div>
+                  <label className="block mb-5 text-sm font-medium text-gray-900 dark:text-white">
+                    Product Image
+                  </label>
+                  <div className="max-w-lg mx-auto mb-5">
+                    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white" >Upload Image 1</label>
+                    <input onChange={(e) => {
+                        setimage1(e.target.files[0]);
+                      }} className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" aria-describedby="user_avatar_help" id="user_avatar" type="file" />
+                  </div>
+
+                  <div className="max-w-lg mx-auto">
+                    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white" >Upload Image 2</label>
+                    <input onChange={(e) => {
+                        setimage2(e.target.files[0]);
+                      }} className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" aria-describedby="user_avatar_help" id="user_avatar" type="file" />
+                  </div>
+              </div>
+
+              {/* <div>
                 <label
                   htmlFor="photo"
                   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -183,7 +205,7 @@ const SellItem = () => {
                     />
                   </Label>
                 </div>
-              </div>
+              </div> */}
 
               <div className="sm:col-span-2">
                 <label

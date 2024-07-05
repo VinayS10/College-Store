@@ -14,9 +14,9 @@ const Navbar = (props) => {
     <>
         <nav className="bg-pink-50 fixed w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600">
             <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-                    <span className="text-red-700 self-center text-2xl font-semibold whitespace-nowrap dark:text-white"><Link to='/'>COLLEGE-STORE</Link></span>
+                <span className="text-red-700 self-center text-3xl font-semibold whitespace-nowrap dark:text-white"><Link to='/'>COLLEGE-STORE</Link></span>
 
-                
+                <span className="text-xl font-semibold tracking-tigh dark:text-white text-blue-800"><Link to = '/'>Home</Link></span>
                 <div className="flex gap-3 md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
         
                     {localStorage.getItem("token") && <Link to="/cart"> <img src={cart_icon} alt="" /></Link>}             

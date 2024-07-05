@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import { Link, useNavigate } from "react-router-dom";
 import axios from 'axios'
-import { Card } from "flowbite-react";
 import Category from "../components/Category";
 
 const HomePage = () => {
@@ -10,7 +9,6 @@ const HomePage = () => {
   const [products, setproducts] = useState([]);
   const [catproducts, setcatproducts] = useState([]);
   const [search, setsearch] = useState('');
-  const [catfiter, setcatfiter] = useState('');
 
   // useEffect(() => {
   //   if (!localStorage.getItem("token")) {
@@ -49,7 +47,7 @@ const HomePage = () => {
 
   const handleCategory = (value) => {
     let filteredProducts = products.filter((item)=> {
-      if(value == 'All') {
+      if(value == "Clear Filters") {
         return item;
       }
       else if (item.category.toLowerCase() === (value.toLowerCase())) {
@@ -77,6 +75,10 @@ const HomePage = () => {
     })
   }
 
+  const handleProduct = (id) => {
+    navigate('/product/' + id);
+  }
+
   return (
     <>
       <Navbar search={search} handleSearch={handleSearch} handleClick = {handleClick}/>
@@ -84,25 +86,24 @@ const HomePage = () => {
       <div className='mt-[8rem]'>
 
         <div className="flex justify-center flex-wrap gap-10">
+        {catproducts && catproducts.length == 0 && <h1>No Result Found</h1>}
         {catproducts && catproducts.length > 0 && catproducts.map((item, index) => {
             {return (
               <div key={item._id} className=" bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-                <a href="#">
-                  <img width="350px" height="200px"
-                    className="p-8 rounded-t-lg"
-                    src={"http://localhost:3000/" + item.image}
-                    alt="product image"
-                  />
-                </a>
+                <div onClick={() => handleProduct(item._id)} className="cursor-pointer">
+                    <img width="350px" height="200px"
+                      className="p-8 rounded-t-lg"
+                      src={"http://localhost:3000/" + item.image1}
+                      alt="product image"
+                    />
+                </div>
                 <div className="px-5 pb-5">
-                  <a href="#">
                     <h5 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">
                       <span>{item.name}</span> | {item.category}
                     </h5>
                     <h6 className="text-s font-semibold tracking-tight text-gray-900 dark:text-white">
                       <span>{item.description}</span>
                     </h6>
-                  </a>
 
                   <div className=" mt-[1rem] flex items-center justify-between">
                     <span className="text-3xl font-bold text-gray-900 dark:text-white">

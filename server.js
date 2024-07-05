@@ -34,15 +34,26 @@ mongoose.connect('mongodb://localhost:27017/Shop');
 const Users = mongoose.model('Users', {
     username: String,
     password: String,
+    email: String,
+    mobile: String,
     likedProducts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'saleProducts' }]
 }); 
-const saleProducts= mongoose.model('saleProducts',{name: String, category: String, price: String, description: String, image: String });
+const saleProducts= mongoose.model('saleProducts',{
+    name: String, 
+    category: String, 
+    price: String, 
+    description: String, 
+    image1: String,
+    image2: String,
+    addedBy: mongoose.Schema.Types.ObjectId 
+});
 
 app.post('/signup', (req, res) => {
-    console.log(req.body);
     const username = req.body.username;
     const password = req.body.password;
-    const user = new Users({ username: username, password: password });
+    const email = req.body.email;
+    const mobile = req.body.mobile;
+    const user = new Users({ username: username, email, mobile, password: password });
     user.save()
     .then(() => {
         res.send({message: 'saved successfully'})
@@ -53,12 +64,11 @@ app.post('/signup', (req, res) => {
 })
 
 app.post('/login', (req, res) => {
-    console.log(req.body);
     const username = req.body.username;
     const password = req.body.password;
+    
     Users.findOne({ username: username})
     .then((result) => {
-        console.log(result, "user data");
         if(!result) {
             res.send({message: 'user not found'});
         } else {
@@ -79,15 +89,29 @@ app.post('/login', (req, res) => {
     })
 })
 
-app.post('/sell', upload.single('image'), (req, res) => {
-    console.log(req.body);
-    console.log(req.file);
+app.get('/get-user/:uId', (req, res) => {
+    const userId = req.params.uId;
+    Users.findOne({ _id : userId})
+    .then((result) => {
+        res.send({message: 'success', user :result})
+    })
+    .catch(() => {
+        res.send({message: 'server error'});
+    })
+})
+
+app.post('/sell', upload.fields([{name: 'image1'}, {name: 'image2'}]), (req, res) => {
+    // console.log(req.files);
+    // console.log(req.body);
+    // return;
     const name = req.body.name;
     const category = req.body.category;
     const price = req.body.price;
     const description=req.body.description;
-    const image = req.file.path;
-    const spdt= new saleProducts({name:name,category:category,price:price,description:description,image:image});
+    const image1 = req.files.image1[0].path;
+    const image2 = req.files.image2[0].path;
+    const addedBy = req.body.userId;
+    const spdt= new saleProducts({name:name,category:category,price:price,description:description,image1, image2, addedBy:addedBy});
     spdt.save().then(() => {
         res.send({ message: 'saved successfully' })
 
@@ -119,13 +143,26 @@ app.post('/like-product',(req,res)=>{
     })
 })
 
+app.get('/product/:id',(req,res)=>{
+    console.log(req.params);
+
+    saleProducts.findOne({_id : req.params.id}).then((result)=>{
+        // console.log(result,'user data');
+        res.send({message: 'success', product:result})
+    }).catch((err)=>{
+        console.log(err);
+        res.send({message:'server error'})
+    })
+})
+
 app.post('/cart-product',(req,res)=>{
     Users.findOne({ _id: req.body.userId }).populate('likedProducts')
     .then((result) => {
         res.send({ message: 'success', products: result.likedProducts })
     })
-    .catch((err) => {
-        res.send({ message: 'server err' })
+    .catch((err)=>{
+        console.log(err);
+        res.send({message:'server error'})
     })
 
 })
