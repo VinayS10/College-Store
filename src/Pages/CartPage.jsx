@@ -5,31 +5,25 @@ import axios from 'axios'
 import { Card } from "flowbite-react";
 import Category from "../components/Category";
 
-const HomePage = () => {
+const CartPage = () => {
   const navigate = useNavigate();
   const [products, setproducts] = useState([]);
   const [catproducts, setcatproducts] = useState([]);
   const [search, setsearch] = useState('');
-  const [catfiter, setcatfiter] = useState('');
-
-  // useEffect(() => {
-  //   if (!localStorage.getItem("token")) {
-  //     navigate("/login");
-  //   }
-  // }, []);
 
   useEffect(() => {
-    const url = 'http://localhost:3000/get-product';
-    axios.get(url).then((result) => {
-      console.log(result);
-      if (result.data.products) {
-        setproducts(result.data.products)
-        setcatproducts(result.data.products)
-      }
-    }).catch((err) => {
-      console.log(err);
-      alert('Server error');
-    })
+    const url = 'http://localhost:3000/cart-product';
+    let data = { userId: localStorage.getItem('userId') }
+        axios.post(url, data)
+            .then((res) => {
+                if (res.data.products) {
+                    setproducts(res.data.products);
+                    setcatproducts(res.data.products)
+                }
+            })
+            .catch((err) => {
+                alert('Server Err.')
+            })
   }, [])
 
   const handleSearch = (value) => {
@@ -60,22 +54,6 @@ const HomePage = () => {
      setcatproducts(filteredProducts);
   }
 
-  const AddCart = (productId) => {
-    const userId = localStorage.getItem('userId');
-    console.log(productId, userId);
-    const url = 'http://localhost:3000/like-product';
-    const data = {userId, productId};
-    axios.post(url, data)
-    .then((result) => {
-      console.log(result)
-      if(result.data.message) {
-        alert("Added to cart");
-      }
-    }).catch((err) => {
-      console.log(err);
-      alert('Server error');
-    })
-  }
 
   return (
     <>
@@ -83,7 +61,7 @@ const HomePage = () => {
       <Category handleCategory={handleCategory}/>
       <div className='mt-[8rem]'>
 
-        <div className="flex justify-center flex-wrap gap-10">
+        <div className="flex justify-center flex-wrap gap-2">
         {catproducts && catproducts.length > 0 && catproducts.map((item, index) => {
             {return (
               <div key={item._id} className=" bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
@@ -109,10 +87,7 @@ const HomePage = () => {
                       Rs.{item.price}
                     </span>
                     <button
-                      value={item} 
-                      onClick={()=>{
-                        AddCart(item._id);
-                      }}
+                      
                       className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                     >
                       Add to cart
@@ -131,4 +106,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+export default CartPage;

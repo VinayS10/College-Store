@@ -17,6 +17,7 @@ const LoginSection = () => {
             if(res.data.message) {
                 if(res.data.token) {
                     localStorage.setItem('token', res.data.token)
+                    localStorage.setItem('userId', res.data.userId)
                     navigate('/')
                 }
                 alert(res.data.message);

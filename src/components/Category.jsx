@@ -4,9 +4,9 @@ import React from 'react';
 let Categories=['All','Furniture','Stationery','Electronics','Books','Cycle'];
 const Category = (props) => {
     return (
-        <div className="fixed top-0 w-[100%] mt-[73px] bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-600">
-            <div className="flex flex-wrap mx-auto p-4">
-                <a className="w-2/4 flex ">
+        <div className="start-0 fixed top-0 w-[100%] mt-[73px] bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-600">
+            <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+                <a className="flex items-center space-x-3 rtl:space-x-reverse">
                     <span className="self-center text-xl whitespace-nowrap dark:text-white"> All Categories</span>
                 </a>
                 

@@ -31,12 +31,12 @@ import mongoose from 'mongoose';
 mongoose.connect('mongodb://localhost:27017/Shop');
 
 
-const Users = mongoose.model('Users', {username: String, password: String}); 
+const Users = mongoose.model('Users', {
+    username: String,
+    password: String,
+    likedProducts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'saleProducts' }]
+}); 
 const saleProducts= mongoose.model('saleProducts',{name: String, category: String, price: String, description: String, image: String });
-
-app.get('/', (req, res) => {
-    res.send('Hello, world  !')
-})
 
 app.post('/signup', (req, res) => {
     console.log(req.body);
@@ -66,7 +66,7 @@ app.post('/login', (req, res) => {
                 const token = jwt.sign({
                     data: result
                 }, 'KEY', { expiresIn: '1h' });
-                res.send({message: 'User found', token: token})
+                res.send({message: 'User found', token: token, userId: result._id})
             }
             if (result.password != password) {
                 res.send({ message: 'incorrect password' })
@@ -104,6 +104,30 @@ app.get('/get-product',(req,res)=>{
         console.log(err);
         res.send({message:'server error'})
     })
+})
+
+app.post('/like-product',(req,res)=>{
+    const productId = req.body.productId;
+    const userId = req.body.userId;
+
+    Users.updateOne({_id: userId} , {$addToSet : { likedProducts: productId }} )
+    .then(() => { 
+        res.send({ message: 'Added to cart successfully' })
+
+    }).catch(() => {
+        res.send({ message: 'server error' });
+    })
+})
+
+app.post('/cart-product',(req,res)=>{
+    Users.findOne({ _id: req.body.userId }).populate('likedProducts')
+    .then((result) => {
+        res.send({ message: 'success', products: result.likedProducts })
+    })
+    .catch((err) => {
+        res.send({ message: 'server err' })
+    })
+
 })
 
 app.listen(port, () => {
