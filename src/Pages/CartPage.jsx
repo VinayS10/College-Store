@@ -7,6 +7,7 @@ import Category from "../components/Category";
 const CartPage = () => {
   const navigate = useNavigate();
   const [products, setproducts] = useState([]);
+  const [refresh, setrefresh] = useState(false);
   const [catproducts, setcatproducts] = useState([]);
   const [search, setsearch] = useState('');
 
@@ -23,7 +24,7 @@ const CartPage = () => {
             .catch((err) => {
                 alert('Server Err.')
             })
-  }, [])
+  }, [refresh])
 
   const handleSearch = (value) => {
     console.log(value);
@@ -52,6 +53,30 @@ const CartPage = () => {
      })
      setcatproducts(filteredProducts);
   }
+
+  const RemoveCart = (productId) => {
+    if (!localStorage.getItem("token")) {
+      navigate("/login");
+    }
+    else {
+      const userId = localStorage.getItem('userId');
+      console.log(productId, userId);
+      const url = 'http://localhost:3000/dislike-product';
+      const data = {userId, productId};
+      axios.post(url, data)
+      .then((result) => {
+        console.log(result)
+        if(result.data.message) {
+          alert("Removed from cart");
+          setrefresh(!refresh);
+        }
+      }).catch((err) => {
+        console.log(err);
+        alert('Server error');
+      })
+    }
+  }
+
 
   const handleProduct = (id) => {
     navigate('/product/' + id);
@@ -88,11 +113,8 @@ const CartPage = () => {
                     <span className="text-3xl font-bold text-gray-900 dark:text-white">
                       Rs.{item.price}
                     </span>
-                    <button
-                      
-                      className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                    >
-                      Add to cart
+                    <button value={item} onClick={()=>{RemoveCart(item._id)}} className="text-white  bg-red-700 hover:bg-red-800 focus:ring-2 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                      Remove
                     </button>
                   </div>
                 </div>

@@ -144,6 +144,21 @@ app.post('/like-product',(req,res)=>{
     })
 })
 
+
+app.post('/dislike-product',(req,res)=>{
+    const productId = req.body.productId;
+    const userId = req.body.userId;
+
+    Users.updateOne({_id: userId} , {$pull : { likedProducts: productId }} )
+    .then(() => { 
+        res.send({ message: 'Removed from cart' })
+
+    }).catch(() => {
+        res.send({ message: 'server error' });
+    })
+})
+
+
 app.get('/product/:id',(req,res)=>{
     saleProducts.findOne({_id : req.params.id}).then((result)=>{
         res.send({message: 'success', product:result})
@@ -163,6 +178,21 @@ app.get('/profile/:id',(req,res)=>{
         res.send({message:'server error'})
     })
 })
+
+// app.post('/editprofile/:id',(req,res)=>{
+//     const uid=req.params.id;
+//     const username = req.body.username;
+//     const email = req.body.email;
+//     const mobile = req.body.mobile;
+//     Users.findOneAndUpdate({_id : uid})
+//     .then((result)=>{
+//         res.send({message: 'success', user:{email: email, mobile: mobile, username: username}})
+//         // res.send({message: 'success', user:{email: result.email, mobile: result.mobile, username: result.username}})
+//     }).catch((err)=>{
+//         console.log(err);
+//         res.send({message:'server error'})
+//     })
+// })
 
 app.post('/cart-product',(req,res)=>{
     Users.findOne({ _id: req.body.userId }).populate('likedProducts')

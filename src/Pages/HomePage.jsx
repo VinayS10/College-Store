@@ -7,6 +7,8 @@ import Category from "../components/Category";
 const HomePage = () => {
   const navigate = useNavigate();
   const [products, setproducts] = useState([]);
+  const [refresh, setrefresh] = useState(false);
+  const [cartproducts, setcartproducts] = useState([]);
   const [catproducts, setcatproducts] = useState([]);
   const [search, setsearch] = useState('');
 
@@ -28,7 +30,19 @@ const HomePage = () => {
       console.log(err);
       alert('Server error');
     })
-  }, [])
+
+    const url2 = 'http://localhost:3000/cart-product';
+    let data = { userId: localStorage.getItem('userId') }
+    axios.post(url2, data).then((result) => {
+      console.log(result);
+      if (result.data.products) {
+        setcartproducts(result.data.products)
+      }
+    }).catch((err) => {
+      console.log(err);
+      alert('Server error');
+    })
+  }, [refresh])
 
   const handleSearch = (value) => {
     console.log(value);
@@ -63,22 +77,48 @@ const HomePage = () => {
       navigate("/login");
     }
     else {
-    const userId = localStorage.getItem('userId');
-    console.log(productId, userId);
-    const url = 'http://localhost:3000/like-product';
-    const data = {userId, productId};
-    axios.post(url, data)
-    .then((result) => {
-      console.log(result)
-      if(result.data.message) {
-        alert("Added to cart");
-      }
-    }).catch((err) => {
-      console.log(err);
-      alert('Server error');
-    })
+      const userId = localStorage.getItem('userId');
+      console.log(productId, userId);
+      const url = 'http://localhost:3000/like-product';
+      const data = {userId, productId};
+      axios.post(url, data)
+      .then((result) => {
+        console.log(result)
+        if(result.data.message) {
+          alert("Added to cart");
+          setrefresh(!refresh);
+        }
+      }).catch((err) => {
+        console.log(err);
+        alert('Server error');
+      })
+    }
   }
+
+  const RemoveCart = (productId) => {
+    if (!localStorage.getItem("token")) {
+      navigate("/login");
+    }
+    else {
+      const userId = localStorage.getItem('userId');
+      console.log(productId, userId);
+      const url = 'http://localhost:3000/dislike-product';
+      const data = {userId, productId};
+      axios.post(url, data)
+      .then((result) => {
+        console.log(result)
+        if(result.data.message) {
+          alert("Removed from cart");
+          setrefresh(!refresh);
+        }
+      }).catch((err) => {
+        console.log(err);
+        alert('Server error');
+      })
+    }
   }
+
+
 
   const handleProduct = (id) => {
     navigate('/product/' + id);
@@ -102,27 +142,28 @@ const HomePage = () => {
                       alt="product image"
                     />
                 </div>
-                <div className="px-10 pb-5">
-                    <h5 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">
-                      <span>{item.name}</span> | {item.category}
+                <div className="px-5 pb-5">
+                    <h5 className="flex justify-center text-xl font-semibold tracking-tight text-gray-900 dark:text-white">
+                      <span> {item.name} | {item.category}</span> 
                     </h5>
-                    <h6 className="text-s font-semibold tracking-tight text-gray-900 dark:text-white">
+                    <h6 className="flex justify-center text-s font-semibold tracking-tight text-gray-900 dark:text-white">
                       <span>{item.description}</span>
                     </h6>
 
                   <div className=" mt-[1rem] flex items-center justify-between">
-                    <span className="text-2xl font-bold text-gray-900 dark:text-white">
+                    <span className="text-3xl font-bold text-gray-900 dark:text-white">
                       Rs.{item.price}
                     </span>
-                    <button
-                      value={item} 
-                      onClick={()=>{
-                        AddCart(item._id);
-                      }}
-                      className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                    >
-                      Add to cart
+                    {
+                      cartproducts.find((likedItem) => likedItem._id === item._id) ? <div>
+                      <span className="text-red-600 text-m"> In cart </span>
+                    <button value={item} onClick={()=>{RemoveCart(item._id)}} className="text-white bg-red-600 hover:bg-red-700 focus:ring-2 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                      Remove
+                    </button></div> :
+                    <button value={item} onClick={()=>{AddCart(item._id)}} className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-2 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                      Add to Cart
                     </button>
+                    }
                   </div>
                 </div>
                 
