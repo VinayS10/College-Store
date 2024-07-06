@@ -1,7 +1,3 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
 import {BrowserRouter,Routes,Route} from "react-router-dom";
 import LoginPage from './Pages/LoginPage';
 import RegisterPage from './Pages/RegisterPage';
@@ -9,13 +5,13 @@ import HomePage from './Pages/HomePage';
 import SellItemPage from './Pages/SellItemPage';
 import CartPage from './Pages/CartPage';
 import ProductDetailPage from './Pages/ProductDetailPage';
+import MyProductsPage from './Pages/MyProductsPage';
+import MyProfilePage from "./Pages/MyProfilePage";
 
 function App() {
 
   return (
     <>
-      {/* <Navbar/>
-      <SellItem/> */}
 
       <BrowserRouter>
         <Routes>
@@ -24,6 +20,8 @@ function App() {
         <Route  path="/signup" element={<RegisterPage/>}></Route>
         <Route  path="/sell" element={<SellItemPage/>}></Route>
         <Route  path="/cart" element={<CartPage/>}></Route>
+        <Route  path="/myproducts" element={<MyProductsPage/>}></Route>
+        <Route  path="/profile" element={<MyProfilePage/>}></Route>
         <Route  path="/product/:productId" element={<ProductDetailPage/>}></Route>
         </Routes>
       </BrowserRouter>

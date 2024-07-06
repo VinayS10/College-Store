@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import { Link, useNavigate } from "react-router-dom";
 import axios from 'axios'
@@ -59,6 +59,10 @@ const HomePage = () => {
   }
 
   const AddCart = (productId) => {
+    if (!localStorage.getItem("token")) {
+      navigate("/login");
+    }
+    else {
     const userId = localStorage.getItem('userId');
     console.log(productId, userId);
     const url = 'http://localhost:3000/like-product';
@@ -74,6 +78,7 @@ const HomePage = () => {
       alert('Server error');
     })
   }
+  }
 
   const handleProduct = (id) => {
     navigate('/product/' + id);
@@ -83,21 +88,21 @@ const HomePage = () => {
     <>
       <Navbar search={search} handleSearch={handleSearch} handleClick = {handleClick}/>
       <Category handleCategory={handleCategory}/>
-      <div className='mt-[8rem]'>
+      <div className='mt-[10rem]'>
 
-        <div className="flex justify-center flex-wrap gap-10">
+        <div className="flex justify-center flex-wrap gap-5">
         {catproducts && catproducts.length == 0 && <h1>No Result Found</h1>}
         {catproducts && catproducts.length > 0 && catproducts.map((item, index) => {
             {return (
-              <div key={item._id} className=" bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+              <div key={item._id} className=" bg-white border border-gray-200 rounded-xl shadow dark:bg-gray-800 dark:border-gray-800">
                 <div onClick={() => handleProduct(item._id)} className="cursor-pointer">
-                    <img width="350px" height="200px"
-                      className="p-8 rounded-t-lg"
+                    <img width="340px" height="200px"
+                      className="p-2 rounded-t-lg"
                       src={"http://localhost:3000/" + item.image1}
                       alt="product image"
                     />
                 </div>
-                <div className="px-5 pb-5">
+                <div className="px-10 pb-5">
                     <h5 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">
                       <span>{item.name}</span> | {item.category}
                     </h5>
@@ -106,7 +111,7 @@ const HomePage = () => {
                     </h6>
 
                   <div className=" mt-[1rem] flex items-center justify-between">
-                    <span className="text-3xl font-bold text-gray-900 dark:text-white">
+                    <span className="text-2xl font-bold text-gray-900 dark:text-white">
                       Rs.{item.price}
                     </span>
                     <button

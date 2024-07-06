@@ -4,14 +4,14 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from 'axios'
 import Category from "../components/Category";
 
-const CartPage = () => {
+const MyProductsPage = () => {
   const navigate = useNavigate();
   const [products, setproducts] = useState([]);
   const [catproducts, setcatproducts] = useState([]);
   const [search, setsearch] = useState('');
 
   useEffect(() => {
-    const url = 'http://localhost:3000/cart-product';
+    const url = 'http://localhost:3000/my-products';
     let data = { userId: localStorage.getItem('userId') }
         axios.post(url, data)
             .then((res) => {
@@ -65,12 +65,12 @@ const CartPage = () => {
       <div className='mt-[10rem]'>
 
         <div className="flex justify-center flex-wrap gap-5">
-        {catproducts && catproducts.length == 0 && <h1>Cart is Empty</h1>}
+        {catproducts && catproducts.length == 0 && <h1>No Product Added</h1>}
         {catproducts && catproducts.length > 0 && catproducts.map((item, index) => {
             {return (
               <div key={item._id} className=" bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
               <div onClick={() => handleProduct(item._id)} className="cursor-pointer">
-                  <img width="340px" height="200px"
+                  <img width="350px" height="200px"
                     className="p-2 rounded-t-lg"
                     src={"http://localhost:3000/" + item.image1}
                     alt="product image"
@@ -108,4 +108,4 @@ const CartPage = () => {
   );
 };
 
-export default CartPage;
+export default MyProductsPage

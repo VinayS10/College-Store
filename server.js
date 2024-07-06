@@ -100,6 +100,7 @@ app.get('/get-user/:uId', (req, res) => {
     })
 })
 
+
 app.post('/sell', upload.fields([{name: 'image1'}, {name: 'image2'}]), (req, res) => {
     // console.log(req.files);
     // console.log(req.body);
@@ -144,11 +145,19 @@ app.post('/like-product',(req,res)=>{
 })
 
 app.get('/product/:id',(req,res)=>{
-    console.log(req.params);
-
     saleProducts.findOne({_id : req.params.id}).then((result)=>{
-        // console.log(result,'user data');
         res.send({message: 'success', product:result})
+    }).catch((err)=>{
+        console.log(err);
+        res.send({message:'server error'})
+    })
+})
+
+app.get('/profile/:id',(req,res)=>{
+    const uid=req.params.id;
+    Users.findOne({_id : uid})
+    .then((result)=>{
+        res.send({message: 'success', user:{email: result.email, mobile: result.mobile, username: result.username}})
     }).catch((err)=>{
         console.log(err);
         res.send({message:'server error'})
@@ -164,7 +173,18 @@ app.post('/cart-product',(req,res)=>{
         console.log(err);
         res.send({message:'server error'})
     })
+})
 
+app.post('/my-products',(req,res)=>{
+    const userId = req.body.userId;
+    saleProducts.find({addedBy : userId})
+    .then((result) => {
+        res.send({ message: 'success', products: result })
+    })
+    .catch((err)=>{
+        console.log(err);
+        res.send({message:'server error'})
+    })
 })
 
 app.listen(port, () => {

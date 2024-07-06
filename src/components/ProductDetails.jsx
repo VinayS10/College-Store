@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from 'react-router-dom'
 import { Link, useNavigate } from "react-router-dom";
 import axios from 'axios'
-import Navbar from "./Navbar";
 
 const ProductDetails = () => {
     const p = useParams()
@@ -40,11 +39,11 @@ const ProductDetails = () => {
   return (
     <>
         {product && 
-        <div className="flex flex-wrap">
+        <div className="flex p-8 flex-wrap">
           <div>
-          <div className="mb-5 bg-white border border-gray-400 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+            <div className="mb-5 bg-white border border-gray-400 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
                 <div >
-                    <img width="400px" height="200px"
+                    <img width="500px" height="200px"
                       className="p-8 rounded-t-lg"
                       src={"http://localhost:3000/" + product.image1}
                       alt="product image"
@@ -53,7 +52,7 @@ const ProductDetails = () => {
             </div>
             <div className=" bg-white border border-gray-400 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
                 <div >
-                    <img width="600px" height="200px"
+                    <img width="500px" height="200px"
                       className="p-8 rounded-t-lg"
                       src={"http://localhost:3000/" + product.image2}
                       alt="product image"
@@ -82,7 +81,7 @@ const ProductDetails = () => {
                       </h6>
                     </div>         
                     <div className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                      <button onClick={() => handleContact(product.addedBy)}>Show Contact Details</button>
+                      <button onClick={() => handleContact(product.addedBy)}>Seller Contact Details</button>
                     </div>
                     {user && 
                       <div>
