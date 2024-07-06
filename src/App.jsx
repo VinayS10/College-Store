@@ -8,6 +8,7 @@ import ProductDetailPage from './Pages/ProductDetailPage';
 import MyProductsPage from './Pages/MyProductsPage';
 import MyProfilePage from "./Pages/MyProfilePage";
 import EditProfilePage from "./Pages/EditProfilePage";
+import EditProductPage from "./Pages/EditProductPage";
 
 function App() {
 
@@ -24,6 +25,7 @@ function App() {
         <Route  path="/myproducts" element={<MyProductsPage/>}></Route>
         <Route  path="/profile" element={<MyProfilePage/>}></Route>
         <Route  path="/editprofile" element={<EditProfilePage/>}></Route>
+        <Route  path="/editproduct/:productId" element={<EditProductPage/>}></Route>
         <Route  path="/product/:productId" element={<ProductDetailPage/>}></Route>
         </Routes>
       </BrowserRouter>

@@ -102,9 +102,6 @@ app.get('/get-user/:uId', (req, res) => {
 
 
 app.post('/sell', upload.fields([{name: 'image1'}, {name: 'image2'}]), (req, res) => {
-    // console.log(req.files);
-    // console.log(req.body);
-    // return;
     const name = req.body.name;
     const category = req.body.category;
     const price = req.body.price;
@@ -120,6 +117,39 @@ app.post('/sell', upload.fields([{name: 'image1'}, {name: 'image2'}]), (req, res
         res.send({ message: 'server error' });
     })
 })
+
+
+
+app.post('/editproduct', upload.fields([{name: 'image1'}, {name: 'image2'}]), (req, res) => {
+    const pid = req.body.pid;
+    const name = req.body.name;
+    const category = req.body.category;
+    const price = req.body.price;
+    const description=req.body.description;
+    let image1='';
+    let image2='';
+    if(req.files && req.files.image1 && req.files.image1.length>0) {
+        image1 = req.files.image1[0].path;
+    }
+    if(req.files && req.files.image2) {image2 = req.files.image2[0].path;}
+
+    const editObj ={};
+    if(name) editObj.name = name;
+    if(category) editObj.category = category;
+    if(price) editObj.price = price;
+    if(description) editObj.description = description;
+    if(image1) editObj.image1 = image1;
+    if(image2) editObj.image2 = image2;
+
+    saleProducts.updateOne({ _id : pid }, editObj, {new : true})
+    .then((result) => {
+        res.send({ message: 'saved successfully', product: result })
+
+    }).catch(() => {
+        res.send({ message: 'server error' });
+    })
+})
+
 
 app.get('/get-product',(req,res)=>{
     saleProducts.find().then((result)=>{
@@ -155,6 +185,26 @@ app.post('/dislike-product',(req,res)=>{
 
     }).catch(() => {
         res.send({ message: 'server error' });
+    })
+})
+
+app.post('/deleteitem',(req,res)=>{
+    saleProducts.findOne({_id: req.body.pid})
+    .then((result) => { 
+        console.log(result);
+        if(result.addedBy == req.body.userId) {
+            saleProducts.deleteOne({_id: req.body.pid})
+            .then((deleteresult) => {
+                // if(deleteresult.acknowledged) {
+                //     res.send({ message: 'Item Deleted' }) 
+                // }
+                console.log(deleteresult)
+            })
+            
+        }
+        res.send({ message: 'Item Deleted' })    
+    }).catch(() => {
+            res.send({ message: 'server error' });
     })
 })
 

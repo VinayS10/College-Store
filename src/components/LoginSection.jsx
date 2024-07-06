@@ -31,9 +31,9 @@ const LoginSection = () => {
 
 
   return (
-    <div className='mt-[8rem]'>
+    <div className='mt-[10rem]'>
         <div>
-            <label className="block mb-2 text-lg font-medium text-gray-900 dark:text-white">
+            <label className="block mb-2 text-center text-lg font-medium text-gray-900 dark:text-white">
                             LOGIN
             </label>
         </div>
