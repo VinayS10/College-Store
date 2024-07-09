@@ -3,6 +3,7 @@ import axios from "axios";
 import { Link, useNavigate, useParams  } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Category from "../components/Category";
+import Sidebar from "../components/Sidebar";
 
 const EditProductPage = () => {
   const navigate = useNavigate();
@@ -23,7 +24,7 @@ const EditProductPage = () => {
     axios.get(url).then((result) => {
         if (result.data.product) {
             // setproduct(result.data.product)
-            console.log(result.data.product)
+            // console.log(result.data.product)
             const prod = result.data.product;
             setname(prod.name);
             setcategory(prod.category);
@@ -48,12 +49,13 @@ const EditProductPage = () => {
     formdata.append("image1", image1);
     formdata.append("image2", image2);
     formdata.append("userId",localStorage.getItem("userId"));
+    console.log(formdata);
 
     const url = "http://localhost:3000/editproduct";
 
     axios.post(url, formdata)
     .then((result) => {
-      console.log(result);
+    //   console.log(result);
       if(result.data.message){
           alert(result.data.message);
           navigate('/myproducts')
@@ -67,7 +69,8 @@ const EditProductPage = () => {
     <>
         <Navbar/>
         <Category/>
-        <div className='mt-[8rem] flex justify-center'>
+        <Sidebar/>
+        <div className='mt-[10rem] ml-[10rem]  flex justify-center'>
             <div className=" relative p-4 w-full max-w-2xl h-full md:h-auto">
                 <div className="relative p-4 bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5">
                 <div className="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600">

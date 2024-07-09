@@ -1,11 +1,13 @@
 import React, {useEffect, useState} from 'react'
 import Navbar from '../components/Navbar'
 import Category from '../components/Category'
-import { Link } from 'react-router-dom'
+import { Link ,useNavigate} from 'react-router-dom'
 
 import axios from 'axios'
+import Sidebar from '../components/Sidebar'
 
 const MyProfilePage = () => {
+    const navigate = useNavigate()
     const [user, setuser] = useState({});
 
     useEffect(() => {
@@ -14,6 +16,7 @@ const MyProfilePage = () => {
           console.log(result);
           if(result.data.user) {
             setuser(result.data.user);
+            // console.log(result.data.user)
           }
         }).catch((err) => {
           console.log(err);
@@ -21,12 +24,17 @@ const MyProfilePage = () => {
         })
       }, [])
 
+      const editprofilehandle = (uid) => {
+        navigate('/editprofile/' + uid);
+      }
+
   return (
     <>
         <Navbar/>
         <Category/>
-        
+        <Sidebar/>
         <div className='mt-[10rem]'>
+        
         {user && 
                      
                     
@@ -62,14 +70,15 @@ const MyProfilePage = () => {
                         <div className="mb-5 text-blue-800 text-xl font-semibold">{user.username}</div>                     
                         <div className="mb-5 text-blue-800 text-xl font-semibold">{user.mobile}</div>
                         <div className="mb-5 text-blue-800 text-xl font-semibold">{user.email}</div>
+                        <div className="mb-5 text-blue-800 text-xl font-semibold">{user._id}</div>
             </div>
                      
         </div> 
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-3 sm:space-x-4">
-            <button type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+            <button onClick={() => editprofilehandle(localStorage.getItem('userId'))} type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
               <svg aria-hidden="true" className="inline-flex mr-1 -ml-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" /><path fillRule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clipRule="evenodd" /></svg>
-              <Link to = '/editprofile'>Edit</Link>
+              Edit
             </button>               
           </div>              
           {/* <button type="button" className="inline-flex items-center text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-500 dark:hover:bg-red-600 dark:focus:ring-red-900">

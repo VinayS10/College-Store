@@ -4,9 +4,11 @@ import bodyParser from "body-parser";
 import cors from 'cors';
 import path from 'path';
 import jwt from 'jsonwebtoken';
+import http from 'http'
 import multer from 'multer';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import { Server } from "socket.io";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -20,6 +22,12 @@ const storage = multer.diskStorage({
         cb(null, file.fieldname + '-' + uniqueSuffix)
     }
 })
+const httpServer = http.createServer(app);
+const io = new Server(httpServer, {
+    cors:{
+        origin: '*'
+    }
+}); 
 const upload = multer({ storage: storage })
 app.use('/uploads', express.static(path.join(__dirname,'uploads')));
 
@@ -51,9 +59,9 @@ const saleProducts= mongoose.model('saleProducts',{
 app.post('/signup', (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
-    const email = req.body.email;
-    const mobile = req.body.mobile;
-    const user = new Users({ username: username, email, mobile, password: password });
+    // const email = req.body.email;
+    // const mobile = req.body.mobile;
+    const user = new Users({ username: username, password: password });
     user.save()
     .then(() => {
         res.send({message: 'saved successfully'})
@@ -76,7 +84,7 @@ app.post('/login', (req, res) => {
                 const token = jwt.sign({
                     data: result
                 }, 'KEY', { expiresIn: '1h' });
-                res.send({message: 'User found', token: token, userId: result._id})
+                res.send({message: 'User found', token: token, userId: result._id, username: result.username})
             }
             if (result.password != password) {
                 res.send({ message: 'incorrect password' })
@@ -112,38 +120,6 @@ app.post('/sell', upload.fields([{name: 'image1'}, {name: 'image2'}]), (req, res
     const spdt= new saleProducts({name:name,category:category,price:price,description:description,image1, image2, addedBy:addedBy});
     spdt.save().then(() => {
         res.send({ message: 'saved successfully' })
-
-    }).catch(() => {
-        res.send({ message: 'server error' });
-    })
-})
-
-
-
-app.post('/editproduct', upload.fields([{name: 'image1'}, {name: 'image2'}]), (req, res) => {
-    const pid = req.body.pid;
-    const name = req.body.name;
-    const category = req.body.category;
-    const price = req.body.price;
-    const description=req.body.description;
-    let image1='';
-    let image2='';
-    if(req.files && req.files.image1 && req.files.image1.length>0) {
-        image1 = req.files.image1[0].path;
-    }
-    if(req.files && req.files.image2) {image2 = req.files.image2[0].path;}
-
-    const editObj ={};
-    if(name) editObj.name = name;
-    if(category) editObj.category = category;
-    if(price) editObj.price = price;
-    if(description) editObj.description = description;
-    if(image1) editObj.image1 = image1;
-    if(image2) editObj.image2 = image2;
-
-    saleProducts.updateOne({ _id : pid }, editObj, {new : true})
-    .then((result) => {
-        res.send({ message: 'saved successfully', product: result })
 
     }).catch(() => {
         res.send({ message: 'server error' });
@@ -191,7 +167,6 @@ app.post('/dislike-product',(req,res)=>{
 app.post('/deleteitem',(req,res)=>{
     saleProducts.findOne({_id: req.body.pid})
     .then((result) => { 
-        console.log(result);
         if(result.addedBy == req.body.userId) {
             saleProducts.deleteOne({_id: req.body.pid})
             .then((deleteresult) => {
@@ -229,20 +204,57 @@ app.get('/profile/:id',(req,res)=>{
     })
 })
 
-// app.post('/editprofile/:id',(req,res)=>{
-//     const uid=req.params.id;
-//     const username = req.body.username;
-//     const email = req.body.email;
-//     const mobile = req.body.mobile;
-//     Users.findOneAndUpdate({_id : uid})
-//     .then((result)=>{
-//         res.send({message: 'success', user:{email: email, mobile: mobile, username: username}})
-//         // res.send({message: 'success', user:{email: result.email, mobile: result.mobile, username: result.username}})
-//     }).catch((err)=>{
-//         console.log(err);
-//         res.send({message:'server error'})
-//     })
-// })
+
+app.post('/editproduct', upload.fields([{name: 'image1'}, {name: 'image2'}]), (req, res) => {
+    const pid = req.body.pid;
+    const name = req.body.name;
+    const category = req.body.category;
+    const price = req.body.price;
+    const description=req.body.description;
+    let image1='';
+    let image2='';
+    if(req.files && req.files.image1 && req.files.image1.length>0) {
+        image1 = req.files.image1[0].path;
+    }
+    if(req.files && req.files.image2) {image2 = req.files.image2[0].path;}
+
+    const editObj ={};
+    if(name) editObj.name = name;
+    if(category) editObj.category = category;
+    if(price) editObj.price = price;
+    if(description) editObj.description = description;
+    if(image1) editObj.image1 = image1;
+    if(image2) editObj.image2 = image2;
+
+    saleProducts.updateOne({ _id : pid }, editObj, {new : true})
+    .then((result) => {
+        res.send({ message: 'saved successfully', product: result })
+
+    }).catch(() => {
+        res.send({ message: 'server error' });
+    })
+})
+
+app.post('/editprofile', upload.none(), (req, res) => {
+    const uid = req.body.uid;
+    const email = req.body.email;
+    const username = req.body.username;
+    const mobile = req.body.mobile;
+
+    const editObj= {};
+    if(email) editObj.email = email;
+    if(mobile) editObj.mobile = mobile;
+    if(username) editObj.username = username;
+
+    Users.updateOne({_id: uid}, editObj, {new: true})
+    .then(() => {
+        res.send({ message: 'saved successfully'})
+
+    }).catch(() => {
+        res.send({ message: 'server error' });
+    })
+
+});
 
 app.post('/cart-product',(req,res)=>{
     Users.findOne({ _id: req.body.userId }).populate('likedProducts')
@@ -267,6 +279,16 @@ app.post('/my-products',(req,res)=>{
     })
 })
 
-app.listen(port, () => {
-    console.log('listening on port ${port}')
+let messages = [];
+
+io.on('connection', (socket) => {
+    socket.on('sendmsg', (data) => {
+        messages.push(data);
+        io.emit('getMsg', messages)
+    })
+    io.emit('getMsg', messages)
+})
+
+httpServer.listen(port, () => {
+    console.log(`listening on port ${port}`)
 })

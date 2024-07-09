@@ -3,6 +3,7 @@ import Navbar from "../components/Navbar";
 import { Link, useNavigate } from "react-router-dom";
 import axios from 'axios'
 import Category from "../components/Category";
+import Sidebar from "../components/Sidebar";
 
 const CartPage = () => {
   const navigate = useNavigate();
@@ -87,8 +88,9 @@ const CartPage = () => {
     <>
       <Navbar search={search} handleSearch={handleSearch} handleClick = {handleClick}/>
       <Category handleCategory={handleCategory}/>
-      <div className='mt-[10rem]'>
-
+      <Sidebar/>
+      <div className='mt-[10rem] ml-[10rem]'>
+        
         <div className="flex justify-center flex-wrap gap-5">
         {catproducts && catproducts.length == 0 && <h1>Cart is Empty</h1>}
         {catproducts && catproducts.length > 0 && catproducts.map((item, index) => {

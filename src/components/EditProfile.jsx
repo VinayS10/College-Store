@@ -1,32 +1,55 @@
-import React, { useState } from 'react'
-import {Link, useNavigate} from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import {Link, useNavigate, useParams} from 'react-router-dom'
 import axios from 'axios'
 
 const EditProfile = () => {
+  const p = useParams()
+  console.log('hello', p)
     const navigate = useNavigate()
-    const [username, setusername] = useState();
-    const [email, setemail] = useState();
-    const [mobile, setmobile] = useState();
-    const [user, setuser] = useState({});
+    const [username, setusername] = useState("");
+    const [email, setemail] = useState("");
+    const [mobile, setmobile] = useState("");
+
+    useEffect(() => {
+      const url = 'http://localhost:3000/profile/' + p.userId;
+      axios.get(url).then((result) => {
+          if (result.data.user) {
+              
+              const prod = result.data.user;
+              setusername(prod.username);
+              setemail(prod.email);
+              setmobile(prod.mobile);
+          }
+      }).catch((err) => {
+        console.log(err);
+        alert('Server error');
+      })
+    },[])
 
     const handleApi = () => {
-        console.log({ username});
-        const url = 'http://localhost:3000/editprofile/' + localStorage.getItem('userId');
-        const data = {username, email, mobile}
-        axios.post(url, data)
-        .then((res) => {
-            console.log(res.data);
-            if(res.data.user) {
-                setuser(res.data.user);
-            }
-            navigate('/profile')
-        }) 
-        .catch((err) => {
-            console.log(err);
-            alert('Server error')
-        })
-    }
+      const formdata = new FormData();
+      formdata.append("uid", p.userId);
+      formdata.append("username", username);
+      formdata.append("mobile", mobile);
+      formdata.append("email", email);
+      
+      const url = "http://localhost:3000/editprofile";
+      axios.post(url, formdata)
+      .then((result) => {
+          console.log(email);
+          console.log(result);
+          if(result.data.message){
+              alert(result.data.message);
+              navigate('/profile');
+          }
+      })
+      .catch((err) => {
+          console.log(err);
+          alert('Server error');
+      });
+  }
 
+    
   return (
   <>
         <div className='mt-[10rem]'>                  

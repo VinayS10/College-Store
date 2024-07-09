@@ -18,6 +18,7 @@ const LoginSection = () => {
                 if(res.data.token) {
                     localStorage.setItem('token', res.data.token)
                     localStorage.setItem('userId', res.data.userId)
+                    localStorage.setItem('username', res.data.username)
                     navigate('/')
                 }
                 alert(res.data.message);

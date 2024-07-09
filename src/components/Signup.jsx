@@ -5,14 +5,14 @@ import axios from 'axios'
 const Signup = () => {
     const navigate = useNavigate()
     const [username, setusername] = useState()
-    const [email, setemail] = useState()
-    const [mobile, setmobile] = useState()
+    // const [email, setemail] = useState()
+    // const [mobile, setmobile] = useState()
     const [password, setpassword] = useState()
     
     const handleApi = () => {
         console.log({ username, password });
         const url = 'http://localhost:3000/signup'
-        const data = {username, email, mobile, password}
+        const data = {username, password}
         axios.post(url, data)
         .then((res) => {
             console.log(res.data);
@@ -51,7 +51,7 @@ const Signup = () => {
                         required
                     />
                 </div>
-                <div className="mb-5 ">
+                {/* <div className="mb-5 ">
                     <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                         Email
                     </label>
@@ -82,7 +82,7 @@ const Signup = () => {
                         placeholder="abc"
                         required
                     />
-                </div>
+                </div> */}
                 <div className="mb-5">
                     <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                         Password
